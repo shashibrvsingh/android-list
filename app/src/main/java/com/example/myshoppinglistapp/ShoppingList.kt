@@ -106,3 +106,18 @@ fun ShoppingListApp(){
         )
     }
 }
+
+@Composable
+fun ShoppingListItem(
+    item: ShoppingItem,
+    onEdit: (ShoppingItem) -> Unit,
+    onDelete: (ShoppingItem) -> Unit
+) {
+    // UI code here
+    Row(modifier = Modifier.padding(8.dp).fillMaxWidth().border(
+        border = BorderStroke(2.dp, Color(0xFF0000FF),
+        )
+    )) {
+        Text(text=item.name,modifier = Modifier.padding(8.dp))
+    }
+}
