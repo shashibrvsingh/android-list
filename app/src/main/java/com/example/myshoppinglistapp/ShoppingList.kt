@@ -1,18 +1,31 @@
 package com.example.myshoppinglistapp
 
+import android.R
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,8 +36,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 
 data class  ShoppingItem(val id: Int, val name: String, var quantity: Int, var isEditing: Boolean= false )
@@ -41,6 +58,7 @@ fun ShoppingListApp(){
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top // Changed from Center so you can see it at the top
     ) {
+
         Button(
             onClick = { showDialog = true },
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -53,10 +71,11 @@ fun ShoppingListApp(){
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(40.dp)
+            modifier = Modifier.fillMaxSize().padding(1.dp)
         ) {
             // Your items here
             items(sItems){
+                ShoppingListItem(item = it,{},{})
 
             }
         }
@@ -113,11 +132,58 @@ fun ShoppingListItem(
     onEdit: (ShoppingItem) -> Unit,
     onDelete: (ShoppingItem) -> Unit
 ) {
-    // UI code here
-    Row(modifier = Modifier.padding(8.dp).fillMaxWidth().border(
-        border = BorderStroke(2.dp, Color(0xFF0000FF),
-        )
-    )) {
-        Text(text=item.name,modifier = Modifier.padding(8.dp))
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFFF5F5F5))
+            .border(
+                BorderStroke(1.dp, Color(0xFFE0E0E0)),
+                RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp), // inner padding
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        // 📝 Item Name
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.name,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
+            )
+
+            Text(
+                text = "Qty: ${item.quantity}",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        }
+
+        // ✏️ Edit Button
+        IconButton(onClick = { onEdit(item) }) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit",
+                tint = Color(0xFF1976D2)
+            )
+        }
+
+        // 🗑 Delete Button
+        IconButton(onClick = { onDelete(item) }) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
+                tint = Color(0xFFD32F2F)
+            )
+        }
+
     }
 }
+
+
+
+
+
