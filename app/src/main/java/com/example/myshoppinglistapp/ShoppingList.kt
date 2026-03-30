@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 
-data class  ShoppingItem(val id: Int, val name: String, var quantity: Int, var isEditing: Boolean= false )
+data class  ShoppingItem(val id: Int, var name: String, var quantity: Int, var isEditing: Boolean= false )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,19 +74,34 @@ fun ShoppingListApp(){
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(1.dp)
-        ) {
+        )
+        {
             // Your items here
-            items(sItems){
-               item->
-                if(item.isEditing){
-                    ShoppingItemEditor(item = item,
-                        onEditComplete = {editedName, editedQuantity ->
-                            sItems = sItems.map {it.copy(isEditing = false)
-
+            // Your items here
+            items(sItems) { item ->
+                if (item.isEditing) {
+                    ShoppingItemEditor(
+                        item = item,
+                        onEditComplete = { editedName, editedQuantity ->
+                            sItems = sItems.map { it.copy(isEditing = false) }
+                            val editedItem = sItems.find { it.id == item.id }
+                            editedItem?.let {
+                               it.name = editedName
+                                it.quantity = editedQuantity
+                            }
+                        }
+                    )
+                } else{
+                    ShoppingListItem(
+                        item = item,
+                        onEditClick = {
+                            sItems= sItems.map{it.copy(isEditing = it.id == item.id)}
+                        }, onDeleteClick = {
+                            sItems = sItems-item
+                        })
+                        }
                 }
-
             }
-        }
     }
 
     if (showDialog) {
@@ -152,7 +167,7 @@ fun ShoppingItemEditor(item: ShoppingItem , onEditComplete: (String, Int) -> Uni
             )
 
             BasicTextField(value = editedQuantity,
-                onValueChange = {editedName = it},
+                onValueChange = {editedQuantity = it},
                 singleLine = true,
                 modifier = Modifier.wrapContentSize().padding(8.dp)
             )
@@ -216,7 +231,7 @@ fun ShoppingListItem(
         }
 
         // 🗑 Delete Button
-        IconButton(onClick = { onDeleteClick}) {
+        IconButton(onClick = { onDeleteClick()}) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
